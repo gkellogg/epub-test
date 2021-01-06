@@ -22,20 +22,18 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Configure environment, GITHUB_REF will reference the tag or release: refs/tags/<tag_name>
-    # Format of <tag_name> should include something that can be extracted by BASH.
-    # For example, if tag is "epub-33_V1" it might be extracted using "${GITHUB_REF/_V*/}"
-    env:
-      - URL="https://raw.githack.com/w3c/epub-specs/publish-epub-33/snapshot/${TAG/_V*/}/ECHIDNA"
-      - DECISION="https://www.w3.org/publishing/groups/epub-wg/Meetings/Minutes/2020-11-20-epub#resolution2"
-      - DRYRUN=contains( GITHUB_REF, "tags" )
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Echidna
       - shell: bash
+        # Configure environment, GITHUB_REF will reference the tag or release: refs/tags/<tag_name>
+        # Format of <tag_name> should include something that can be extracted by BASH.
+        # For example, if tag is "epub-33_V1" it might be extracted using "${GITHUB_REF/_V*/}"
         # See https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
         env:
+          URL: "https://raw.githack.com/w3c/epub-specs/publish-epub-33/snapshot/${TAG/_V*/}/ECHIDNA"
+          DECISION: "https://www.w3.org/publishing/groups/epub-wg/Meetings/Minutes/2020-11-20-epub#resolution2"
+          DRYRUN: contains( GITHUB_REF, "tags" )
           TOKEN: ${{ secrets.ECHIDNA_TOKEN }}
         run: |
           echo "URL: $URI"

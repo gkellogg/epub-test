@@ -1,0 +1,45 @@
+# Basic workflow for publishing on a change to release using a component of the release name.
+
+name: Publish
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    tags:
+      - '*' # Push events to a tag tests echidna
+  release:
+    types: [ released ] # Publishing a release runs echidna
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  publish:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Configure environment, GITHUB_REF will reference the tag or release: refs/tags/<tag_name>
+    # Format of <tag_name> should include something that can be extracted by BASH.
+    # For example, if tag is "epub-33_V1" it might be extracted using "${GITHUB_REF/_V*/}"
+    env:
+      - URL="https://raw.githack.com/w3c/epub-specs/publish-epub-33/snapshot/${TAG/_V*/}/ECHIDNA"
+      - DECISION="https://www.w3.org/publishing/groups/epub-wg/Meetings/Minutes/2020-11-20-epub#resolution2"
+      - DRYRUN=contains( GITHUB_REF, "tags" )
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Echidna
+      - shell: bash
+        # See https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
+        env:
+          TOKEN: ${{ secrets.ECHIDNA_TOKEN }}
+        run: |
+          echo "URL: $URI"
+          echo "DECISION: $DECISION"
+          echo "DRYRUN: $DRYRUN"
+          echo "TOKEN: $TOKEN"
+          echo curl "https://labs.w3.org/echidna/api/request"  -data "dry-run=$DRYRUN" --data "url=$URL" --data "decision=$DECISION" --data "token=$TOKEN"

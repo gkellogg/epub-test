@@ -40,6 +40,7 @@ jobs:
           TAG="epub${GITHUB_REF/*epub/}" &&
           SPEC=${TAG/_V*/}
           URL="https://raw.githack.com/w3c/epub-specs/publish-epub-33/snapshot/${SPEC}/ECHIDNA" &&
+          echo "GITHUB_REF: $GITHUB_REF" &&
           echo "URL: $URL" &&
           echo "DECISION: $DECISION" &&
           echo "DRYRUN: $DRYRUN" &&
